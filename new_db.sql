@@ -1,4 +1,5 @@
 CREATE DATABASE example;
 USE example;
-CREATE TABLE users(id integer, name text);
-SHOW tables;
+DROP TABLE IF EXISTS users;
+CREATE TABLE users(id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, name CHAR(100) NOT NULL);
+SHOW columns FROM users;
