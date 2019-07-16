@@ -22,9 +22,9 @@ SELECT
 	    AND status != 0 
 		AND confirmed_at IS NOT NULL 
 	UNION 
-	SELECT user_id AS myfriend 
+	SELECT friend_id AS myfriend 
 	  FROM friendship 
-	  WHERE friend_id = 1 
+	  WHERE user_id = 1 
 	    AND status != 0 
 		AND confirmed_at IS NOT NULL
 	) 
