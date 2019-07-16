@@ -87,28 +87,20 @@ SELECT SUM(t) AS total
 
 
 SELECT 
-  IF(
-	(SELECT COUNT(*) AS amount 
-      FROM likes 
-	  WHERE from_user_id IN 
-		(SELECT user_id 
-		  FROM profiles 
-		  WHERE sex = 1
-		)
-	) 
-	> 
-	(SELECT COUNT(*) AS amount 
-	  FROM likes 
-      WHERE from_user_id IN 
-		(SELECT user_id 
-	      FROM profiles 
-		  WHERE sex = 2
-		)
-	),
-	'пол 1',
-	'пол 2'
-  ) 
-  AS sex
+	SUM(a.total) AS amount, 
+	IF(a.sex=1,'пол 1','пол 2') AS sex 
+	FROM 
+		(SELECT 
+			(SELECT COUNT(from_user_id) 
+				FROM likes 
+				WHERE likes.from_user_id = profiles.user_id
+			) AS total,
+			sex 
+			FROM profiles
+		) a 
+	GROUP BY sex 
+	ORDER BY amount DESC 
+	LIMIT 1
 ;
 
 
