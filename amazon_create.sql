@@ -89,7 +89,7 @@ CREATE TABLE products_variants (
   short_desription TEXT COMMENT 'Короткое описание',
   desription TEXT COMMENT 'Описание',
   url VARCHAR(255) UNIQUE NOT NULL COMMENT 'УРЛ варианта товара, типа pen-123',
-  price INT UNSIGNED NOT NULL COMMENT 'Цена',
+  price DECIMAL NOT NULL COMMENT 'Цена',
   weight INT UNSIGNED NOT NULL COMMENT 'Вес товара',
   used BOOLEAN NOT NULL DEFAULT 0 COMMENT 'Если ноль, то товар новый. Если не 0 - то б/у',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -100,8 +100,8 @@ CREATE TABLE products_variants (
 DROP TABLE IF EXISTS products_price_log;
 CREATE TABLE products_price_log (
   product_variant_id BIGINT UNSIGNED NOT NULL COMMENT 'id варианта товара',
-  old_price INT UNSIGNED COMMENT 'Старая цена',
-  new_price INT UNSIGNED NOT NULL COMMENT 'Новая цена',
+  old_price DECIMAL COMMENT 'Старая цена',
+  new_price DECIMAL NOT NULL COMMENT 'Новая цена',
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=Archive COMMENT = 'Лог изменения цен на варианты товаров';
 
@@ -167,8 +167,8 @@ CREATE TABLE warehouses (
   name VARCHAR(255) NOT NULL COMMENT 'Название',
   shop_id MEDIUMINT UNSIGNED NOT NULL COMMENT 'id продавца - владельца склада',
   region_id BIGINT UNSIGNED NOT NULL COMMENT 'id региона, к которому привязан склад',
-  price INT UNSIGNED COMMENT 'Цена самовывоза',
-  pickup_point BOOLEAN COMMENT 'Если не ноль, то склад является пунктом самовывоза. Если 0 - то не является',
+  price DECIMAL COMMENT 'Цена самовывоза',
+  is_pickup_point BOOLEAN COMMENT 'Если не ноль, то склад является пунктом самовывоза. Если 0 - то не является',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT warehouses_shop_id_fk FOREIGN KEY (shop_id) REFERENCES shops(id),
@@ -197,7 +197,7 @@ CREATE TABLE delyvery_prices (
   delyvery_type_id TINYINT UNSIGNED NOT NULL COMMENT 'id типа доставки',
   region_id BIGINT UNSIGNED NOT NULL COMMENT 'id региона',
   shop_id MEDIUMINT UNSIGNED NOT NULL COMMENT 'id продавца - владельца склада',
-  price INT UNSIGNED NOT NULL COMMENT 'Цена доставки',
+  price DECIMAL NOT NULL COMMENT 'Цена доставки',
   PRIMARY KEY (delyvery_type_id, region_id, shop_id),
   CONSTRAINT delyvery_prices_delyvery_type_id_fk FOREIGN KEY (delyvery_type_id) REFERENCES delyvery_types(id),
   CONSTRAINT delyvery_prices_region_id_fk FOREIGN KEY (region_id) REFERENCES regions(id),
@@ -243,7 +243,7 @@ CREATE TABLE products_offers_price (
   priority TINYINT UNSIGNED NOT NULL COMMENT 'Приоритет акций',
   region_id BIGINT UNSIGNED NOT NULL COMMENT 'id региона',
   product_variant_id BIGINT UNSIGNED NOT NULL COMMENT 'id варианта товара',
-  discount_price INT UNSIGNED NOT NULL COMMENT 'Цена',
+  discount_price DECIMAL NOT NULL COMMENT 'Цена',
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (offer_id, region_id, product_variant_id),
   CONSTRAINT products_offers_price_offer_id_fk FOREIGN KEY (offer_id) REFERENCES offers(id),
@@ -258,15 +258,15 @@ CREATE TABLE offers_conditions (
   delyvery_type_id TINYINT UNSIGNED COMMENT 'id типа доставки',
   payment_id TINYINT UNSIGNED COMMENT 'id типа оплаты',
   warehouse_id BIGINT UNSIGNED COMMENT 'id склада',
-  min_product_price INT UNSIGNED COMMENT 'Условие для акции по цене товара от',
-  max_product_price INT UNSIGNED COMMENT 'Условие для акции по цене товара до',
+  min_product_price DECIMAL COMMENT 'Условие для акции по цене товара от',
+  max_product_price DECIMAL COMMENT 'Условие для акции по цене товара до',
   min_product_weight INT UNSIGNED COMMENT 'Условие для акции по весу товара от',
   max_product_weight INT UNSIGNED COMMENT 'Условие для акции по весу товара до',
-  min_order_price INT UNSIGNED COMMENT 'Условие для акции по сумме заказа от',
-  max_order_price INT UNSIGNED COMMENT 'Условие для акции по сумме заказа до',
+  min_order_price DECIMAL COMMENT 'Условие для акции по сумме заказа от',
+  max_order_price DECIMAL COMMENT 'Условие для акции по сумме заказа до',
   min_order_weight INT UNSIGNED COMMENT 'Условие для акции по весу заказа от',
   max_order_weight INT UNSIGNED COMMENT 'Условие для акции по весу заказа до',
-  sale_product_price INT UNSIGNED COMMENT 'Скидочная стоимость товара в валюте',
+  sale_product_price DECIMAL COMMENT 'Скидочная стоимость товара в валюте',
   sale_product_price_percent INT UNSIGNED COMMENT 'Скидочная стоимость товара в процентах',
   bonus BIGINT UNSIGNED COMMENT 'id товара бонуса. Если указан, то он будет подарком в данной акции',
   CONSTRAINT offers_conditions_offer_id_fk FOREIGN KEY (offer_id) REFERENCES offers(id),
@@ -281,7 +281,7 @@ DROP TABLE IF EXISTS rates;
 CREATE TABLE rates (
   id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE PRIMARY KEY COMMENT 'id курса валюты',
   name VARCHAR(255) NOT NULL COMMENT 'Название',
-  usd_rate FLOAT COMMENT 'Курс валюты к доллару',
+  usd_rate DECIMAL COMMENT 'Курс валюты к доллару',
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) COMMENT = 'Курсы валют Амазона';
 
@@ -431,7 +431,7 @@ CREATE TABLE lists_products (
   list_id BIGINT UNSIGNED NOT NULL COMMENT 'id списка',
   product_variant_id BIGINT UNSIGNED NOT NULL COMMENT 'id товара',
   qauntity INT UNSIGNED NOT NULL COMMENT 'кол-во товара в списке',
-  price INT UNSIGNED NOT NULL COMMENT 'цена товара в списке',
+  price DECIMAL NOT NULL COMMENT 'цена товара в списке',
   CONSTRAINT lists_products_list_id_fk FOREIGN KEY (list_id) REFERENCES users_lists(id),
   CONSTRAINT lists_products_product_variant_id_fk FOREIGN KEY (product_variant_id) REFERENCES products_variants(id)
 ) COMMENT = 'Товары в списках';
